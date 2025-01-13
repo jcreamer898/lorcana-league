@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Shop {
+  id      Int      @id @default(autoincrement())
+  name    String
+  leagues League[]
+}
+
+model League {
+  id            Int             @id @default(autoincrement())
+  year          Int
+  shopId        Int
+  shop          Shop            @relation(fields: [shopId], references: [id])
+  cardSetId     Int
+  cardSet       CardSet         @relation(fields: [cardSetId], references: [id])
+  weeks         Week[]
+  PlayerLeagues PlayerLeagues[]
+}
+
+model CardSet {
+  id      Int      @id @default(autoincrement())
+  name    String
+  leagues League[]
+}
+
+model Player {
+  id            Int             @id @default(autoincrement())
+  name          String
+  username      String          @unique
+  email         String          @unique
+  meleeUser     String          @unique
+  Point         Point[]
+  PlayerLeagues PlayerLeagues[]
+}
+
+model Week {
+  id       Int     @id @default(autoincrement())
+  weekNum  Int
+  leagueId Int
+  league   League  @relation(fields: [leagueId], references: [id])
+  points   Point[]
+}
+
+model Point {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  userId      Int
+  weekId      Int
+  user        Player @relation(fields: [userId], references: [id])
+  week        Week   @relation(fields: [weekId], references: [id])
+}
+
+model PlayerLeagues {
+  playerId Int
+  leagueId Int
+  player   Player @relation(fields: [playerId], references: [id])
+  league   League @relation(fields: [leagueId], references: [id])
+
+  @@id([playerId, leagueId])
+}

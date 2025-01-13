@@ -42,31 +42,41 @@ model CardSet {
 }
 
 model Player {
-  id            Int             @id @default(autoincrement())
+  id            Int                @id @default(autoincrement())
   name          String
-  username      String          @unique
-  email         String          @unique
-  meleeUser     String          @unique
+  username      String             @unique
+  email         String             @unique
+  meleeUser     String             @unique
   Point         Point[]
   PlayerLeagues PlayerLeagues[]
+  PlayerPoints  WeekPlayerPoints[]
 }
 
 model Week {
-  id       Int     @id @default(autoincrement())
-  weekNum  Int
-  leagueId Int
-  league   League  @relation(fields: [leagueId], references: [id])
-  points   Point[]
+  id               Int                @id @default(autoincrement())
+  weekNum          Int
+  leagueId         Int
+  league           League             @relation(fields: [leagueId], references: [id])
+  WeekPlayerPoints WeekPlayerPoints[]
 }
 
 model Point {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
-  userId      Int
-  weekId      Int
-  user        Player @relation(fields: [userId], references: [id])
-  week        Week   @relation(fields: [weekId], references: [id])
+  id           Int                @id @default(autoincrement())
+  name         String
+  description  String
+  Player       Player?            @relation(fields: [playerId], references: [id])
+  playerId     Int?
+  PlayerPoints WeekPlayerPoints[]
+}
+
+model WeekPlayerPoints {
+  id       Int    @id @default(autoincrement())
+  playerId Int
+  pointId  Int
+  weekId   Int
+  player   Player @relation(fields: [playerId], references: [id])
+  point    Point  @relation(fields: [pointId], references: [id])
+  week     Week   @relation(fields: [weekId], references: [id])
 }
 
 model PlayerLeagues {

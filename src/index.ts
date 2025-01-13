@@ -5,10 +5,12 @@ const prisma = new PrismaClient()
 async function main() {
   const allUsers = await prisma.player.findMany({
     include: {
-      Point: true,
+      PlayerPoints: true,
     },
   });
-  console.dir(allUsers, { depth: null });
+  const poinst = await prisma.weekPlayerPoints.findMany();
+  console.dir(allUsers[0].PlayerPoints);
+  console.log(poinst)
 }
 
 main()
